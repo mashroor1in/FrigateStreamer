@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <img src="metadata/screenshot.png" width="260" alt="Frigate Stream App Screenshot" style="border-radius: 20px; box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.5);" />
+  <img src="metadata/screenshot1.png" width="260" alt="Frigate Stream App Screenshot" style="border-radius: 20px; box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.5);" />
 </p>
 
 ---
