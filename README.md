@@ -1,94 +1,123 @@
 # Frigate Stream
 
 <p align="center">
-  <b>Turn your old or rooted Android phones into low-latency IP cameras that push directly to Frigate NVR.</b>
+  <img src="metadata/logo.png" width="180" alt="Frigate Stream Logo" style="border-radius: 36px; box-shadow: 0px 4px 20px rgba(0, 240, 255, 0.4);" />
+</p>
+
+<p align="center">
+  <b>Repurpose your old or rooted Android devices into low-latency IP cameras that push directly to Frigate NVR.</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android_11--14-brightgreen.svg?style=flat-square&logo=android" alt="Android Support" />
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/UI-Jetpack_Compose-blueviolet.svg?style=flat-square&logo=jetpackcompose" alt="Jetpack Compose" />
+  <img src="https://img.shields.io/badge/Protocol-RTSP_Push_ANNOUNCE-orange.svg?style=flat-square" alt="RTSP Push" />
 </p>
 
 ---
 
-Frigate Stream is a lightweight, background-friendly Android application designed to repurpose old devices (Android 11 to 13+) as smart security cameras. By utilizing **RTSP push (ANNOUNCE mode)**, the app streams H.264 video and AAC audio directly to Frigate's built-in `go2rtc` server without requiring complex port forwarding or open inbound ports on your phone.
+## 📥 Direct Download (Pre-compiled APK)
+
+You don't need to build the project yourself to get started! We have prepared a pre-compiled, release-ready ZIP file containing the Android APK.
+
+📦 **[Download FrigateStreamer-v1.0.0.zip](release/FrigateStreamer-v1.0.0.zip)**  
+*(Extract the zip to get the `.apk` file and install it directly on your device)*
 
 ---
 
-## Key Features
+## 🌟 Key Features
 
-*   **Header-less Background Streaming**: Runs completely previewless using native `Camera2` virtual textures. Screen off? App in background? The stream continues seamlessly.
-*   **Foreground Service Pipeline**: Runs as a persistent foreground service with a notification displaying live bitrate and uptime.
-*   **Dynamic Lens Switching**: Toggle between Front and Rear camera lenses **mid-stream** without dropping the RTSP socket connection.
-*   **Auto-Start on Boot**: Optional toggle to launch and start streaming automatically when the phone restarts.
-*   **Battery & Performance Optimized**: Adjustable resolutions (480p, 720p, 1080p), FPS limits, and bitrates to prevent battery bloat and keep CPU usage low.
-*   **Premium Modern Interface**: Dark theme Jetpack Compose UI with real-time connection status badges, pulsing start button, and live telemetry data.
+*   **Zero-Overlay Previewless Capturing**: Streams background camera feeds using Android's native `Camera2` API and off-screen virtual texture mapping. **No transparent overlay window hacks or "Display over other apps" permissions required!**
+*   **Dynamic Lens Switching**: Switch between the Front and Rear camera lenses **mid-stream**. The service seamlessly rebuilds the active camera session under the hood without dropping the RTSP socket connection.
+*   **Foreground Service Pipeline**: Runs as a persistent foreground service with a status notification displaying live bitrate telemetry and uptime.
+*   **Boot Auto-Start**: Includes a broadcast receiver that listens for system boot (`ACTION_BOOT_COMPLETED`) and automatically triggers the background stream (can be toggled off in settings).
+*   **Zero-Lag UI Cache**: Built with a reactive Jetpack Compose interface backed by a synchronized UI state cache. Your settings typing experience is fast and lag-free, while the app handles asynchronous disk writes (via Android DataStore) in the background.
+*   **Battery & Performance Controls**: Selectable resolutions (480p SD, 720p HD, 1080p FHD), adjustable FPS targets (5 to 30), and custom bitrates.
 
 ---
 
-## Getting Started
+## ⚙️ Setup & Installation
 
-### 1. Compile the APK
-Import the project into **Android Studio**, build the project, and output the debug APK:
-```bash
-# Output location: app/build/outputs/apk/debug/app-debug.apk
-./gradlew assembleDebug
+### 1. Host Server Configuration (Docker / Frigate)
+Since Frigate runs inside a Docker container, you must map the go2rtc RTSP port (**`8554`**) so your phones can reach it from your local network.
+
+Add `8554:8554` to your `docker-compose.yml` file:
+```yaml
+services:
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    ...
+    ports:
+      - "5000:5000"       # Web UI
+      - "1984:1984"       # go2rtc API / WebRTC Dashboard
+      - "8554:8554"       # RTSP (Must be mapped!)
+      - "8555:8555/tcp"   # WebRTC
+      - "8555:8555/udp"
 ```
 
-### 2. Configure your Frigate Server (`config.yml`)
-Add the camera endpoints to your Frigate configuration so `go2rtc` is prepared to receive the incoming RTSP streams:
+### 2. Configure Frigate `config.yml`
+Configure go2rtc to accept incoming RTSP push streams. Under `go2rtc.streams`, add empty arrays for your phone endpoints:
 
 ```yaml
 go2rtc:
   streams:
-    phone_ps1: []  # Tells go2rtc to accept incoming RTSP push streams
-    phone_ps2: []
-    phone_ps3: []
+    phone_ps1: []  # go2rtc awaits RTSP push from Phone 1
+    phone_ps2: []  # go2rtc awaits RTSP push from Phone 2
+    phone_ps3: []  # go2rtc awaits RTSP push from Phone 3
 
 cameras:
-  phone_ps1:
+  phone_ps2:
     ffmpeg:
       inputs:
-        - path: rtsp://127.0.0.1:8554/phone_ps1
+        - path: rtsp://127.0.0.1:8554/phone_ps2
           roles:
             - detect
             - record
     detect:
       enabled: true
-      width: 1280
-      height: 720
-      fps: 15
+      width: 640
+      height: 480
+      fps: 5
 ```
-*Note: Make sure port **`8554`** is mapped out of your Docker container in your docker-compose file.*
 
-### 3. Setup the App
-1. Install the APK on your device:
-   ```bash
-   adb install app-debug.apk
-   ```
+### 3. Configure the Android App
+1. Install the APK on your device.
 2. Grant **Camera** and **Microphone** permissions.
-3. Exemption from battery saving: Navigate to **Battery settings** on your device and set Frigate Stream to **Unrestricted** (or tap the in-app shortcut row).
-4. Enter the Frigate Server IP (e.g. `192.168.31.106`) and the RTSP port (`8554`).
-5. Choose your target **Lens** and **Resolution**, then tap **START STREAM**.
+3. Exclude the app from battery optimizations to allow uninterrupted streaming:
+   *   *Go to Settings → Apps → Frigate Stream → Battery → select **Unrestricted**.*
+4. Enter your home server's IP address (e.g. `192.168.31.106`) and port `8554`.
+5. Name the stream (e.g. `phone_ps2` to match your Frigate config).
+6. Set your lens and target resolution, then tap **START STREAM**.
 
 ---
 
-## Optimizing CPU Usage on Your Server
+## 🛡️ CPU & Performance Optimizations
 
-If you notice high FFmpeg CPU usage on your Frigate server:
-1. **Reduce FPS**: Slide the FPS slider in the app down to **`5`** or **`10`**. A lower FPS is highly recommended for security object detection and uses 66% less processing power than 15/30 FPS.
-2. **Reduce Resolution**: Select **`480p SD`** (`640x480`) in the app. Lower resolutions require significantly fewer CPU cycles to decode.
-3. **Enable Hardware Acceleration**: Add hardware acceleration presets in your Frigate `config.yml` (e.g., `preset-vaapi` for Intel CPUs or `preset-rpi-64-h264` for Raspberry Pi).
+Running continuous video decoding on a server can be CPU intensive. Follow these tips to minimize the workload:
 
----
-
-## Tech Stack
-
-*   **UI**: Jetpack Compose (Material 3)
-*   **Database**: Android DataStore Preferences
-*   **Camera Pipeline**: Camera2 API via RootEncoder (`pedroSG94/RootEncoder`)
-*   **Video Encoder**: MediaCodec H.264 (Hardware Accelerated)
-*   **Audio Encoder**: MediaCodec AAC-LC
-*   **Min SDK**: 30 (Android 11)
-*   **Target SDK**: 34 (Android 13/14)
+1. **Lower the Frame Rate (FPS)**: In the app, slide the FPS limit down to **`5`** or **`10`**. Object detection works perfectly fine at 5 FPS and uses 66% less CPU than 15 FPS.
+2. **Lower the Resolution**: Select **`480p SD`** (`640x480`) in the app. A 480p frame has 3 times fewer pixels to decode than 720p, reducing server overhead.
+3. **Use Hardware Acceleration**: Enable hardware decoding presets (like Intel VAAPI, Nvidia NVDEC, or Raspberry Pi presets) in your Frigate `config.yml`:
+   ```yaml
+   ffmpeg:
+     hwaccel_args: preset-vaapi
+   ```
 
 ---
 
-## License
+## 🛠️ Build Guide (For Developers)
+
+If you wish to compile or modify the application yourself:
+1. Open Android Studio (Iguana / Koala or newer).
+2. Set the build variant to `debug` to ensure automated key signing.
+3. Run the Gradle build task:
+   ```bash
+   ./gradlew assembleDebug
+   ```
+
+---
+
+## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
