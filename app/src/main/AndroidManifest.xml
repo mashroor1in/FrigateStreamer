@@ -72,5 +72,14 @@
             </intent-filter>
         </receiver>
 
+        <!-- ─── Termux / ADB Shell Control Receiver ────────── -->
+        <receiver
+            android:name=".TermuxReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.frigatestream.ACTION_COMMAND" />
+            </intent-filter>
+        </receiver>
+
     </application>
 </manifest>

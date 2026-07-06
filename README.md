@@ -110,6 +110,44 @@ Running continuous video decoding on a server can be CPU intensive. Follow these
 
 ---
 
+## 🤖 Termux & ADB Remote Control
+
+Since this app is designed to run on rooted or dedicated homelab devices, you can control the streamer, switch cameras, or update server settings directly from the command line using **Termux** or **ADB Shell**.
+
+The app exposes a Broadcast Receiver (`TermuxReceiver`) listening to the action `com.frigatestream.ACTION_COMMAND`.
+
+### Command Reference
+
+#### 1. Start the Stream
+Run this to launch the foreground service and start pushing the camera feed:
+```bash
+am broadcast -a com.frigatestream.ACTION_COMMAND -n com.frigatestream/.TermuxReceiver --es cmd start
+```
+
+#### 2. Stop the Stream
+```bash
+am broadcast -a com.frigatestream.ACTION_COMMAND -n com.frigatestream/.TermuxReceiver --es cmd stop
+```
+
+#### 3. Change Camera Lens (Front/Rear)
+Toggles the active lens dynamically mid-stream or updates the saved preference:
+```bash
+# Switch to Front Camera
+am broadcast -a com.frigatestream.ACTION_COMMAND -n com.frigatestream/.TermuxReceiver --es cmd set_camera --es camera front
+
+# Switch to Rear Camera
+am broadcast -a com.frigatestream.ACTION_COMMAND -n com.frigatestream/.TermuxReceiver --es cmd set_camera --es camera rear
+```
+
+#### 4. Change Server Configuration
+Modify the target server IP, port, or stream name remotely:
+```bash
+am broadcast -a com.frigatestream.ACTION_COMMAND -n com.frigatestream/.TermuxReceiver --es cmd set_config --es ip 192.168.31.106 --es name my_custom_stream_name --es port 8554
+```
+*(You can also pass `--es user <username>` and `--es pass <password>` for go2rtc authentication).*
+
+---
+
 ## 🛠️ Build Guide (For Developers)
 
 If you wish to compile or modify the application yourself:
