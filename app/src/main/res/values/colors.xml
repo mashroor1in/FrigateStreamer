@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark background matching app theme for adaptive icons -->
+    <color name="ic_launcher_background">#080C18</color>
+</resources>

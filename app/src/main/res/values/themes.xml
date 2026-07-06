@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base app theme (used by the system before Compose takes over) -->
+    <style name="Theme.FrigateStream" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- Splash screen theme -->
+    <style name="Theme.FrigateStream.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#080C18</item>
+        <item name="windowSplashScreenAnimatedIcon">@android:drawable/ic_menu_camera</item>
+        <item name="postSplashScreenTheme">@style/Theme.FrigateStream</item>
+    </style>
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Frigate Stream</string>
+    <string name="channel_name">Stream Status</string>
+    <string name="channel_desc">Shows live stream status and controls</string>
+    <string name="notif_start">Starting stream…</string>
+    <string name="notif_live">Live — pushing to Frigate</string>
+    <string name="notif_stop">Stop</string>
+    <string name="btn_start">Start Stream</string>
+    <string name="btn_stop">Stop Stream</string>
+</resources>

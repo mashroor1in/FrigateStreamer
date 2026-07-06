@@ -1,0 +1,61 @@
+# Built artifacts
+*.apk
+*.aar
+*.ap_
+*.aab
+*.hprof
+java_pid*
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+app/build/
+build/
+
+# Gradle files
+.gradle/
+build/
+local.properties
+GradleWrapper.properties
+
+# Android Studio local configuration
+.idea/
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/modules.xml
+.idea/nav/
+.idea/caches/
+.idea/dictionaries/
+.idea/libraries/
+.idea/runConfigurations/
+captureLayout/
+*.iml
+.navigation/
+
+# Log files
+*.log
+
+# Keystore / Signing files
+*.jks
+*.keystore
+*.pk8
+*.pem
+*.der
+signing.properties
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User-specific configuration
+captures/
+.externalNativeBuild/
+.cxx/
