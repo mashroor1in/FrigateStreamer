@@ -119,14 +119,14 @@ The app exposes a Broadcast Receiver (`TermuxReceiver`) listening to the action 
 ### Command Reference
 
 #### 1. Start the Stream
-Run this to launch the foreground service and start pushing the camera feed:
+Android 12+ restricts background apps from starting a foreground service via broadcasts. When running as **root** (via `su` in Termux/SSH), start the service directly to bypass these restrictions:
 ```bash
-am broadcast -a com.frigatestream.ACTION_COMMAND -n com.frigatestream/.TermuxReceiver --es cmd start
+am start-foreground-service -n com.frigatestream/.StreamService -a com.frigatestream.action.START
 ```
 
 #### 2. Stop the Stream
 ```bash
-am broadcast -a com.frigatestream.ACTION_COMMAND -n com.frigatestream/.TermuxReceiver --es cmd stop
+am start-foreground-service -n com.frigatestream/.StreamService -a com.frigatestream.action.STOP
 ```
 
 #### 3. Change Camera Lens (Front/Rear)

@@ -136,13 +136,28 @@ class StreamService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_START -> {
-                val config = extractConfig(intent)
-                currentConfig = config
                 isIntentionallyStopped.set(false)
                 reconnectAttempt.set(0)
                 // Promote to foreground immediately
                 startForeground(NOTIF_ID, buildNotification("⏳ Starting…"))
-                startStreaming(config)
+
+                serviceScope.launch {
+                    val savedConfig = PreferencesManager(applicationContext).streamConfigFlow.first()
+                    val config = if (intent != null && intent.hasExtra(EXTRA_CONFIG_IP)) {
+                        extractConfig(intent)
+                    } else {
+                        savedConfig
+                    }
+                    currentConfig = config
+
+                    if (config.isValid()) {
+                        startStreaming(config)
+                    } else {
+                        updateNotif("❌ Error: Invalid configuration")
+                        broadcast(STATUS_ERROR, error = "Cannot start stream: Configuration is invalid (IP or Stream Name is empty).")
+                        stopSelf()
+                    }
+                }
             }
             ACTION_STOP -> {
                 isIntentionallyStopped.set(true)
