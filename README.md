@@ -15,6 +15,10 @@
   <img src="https://img.shields.io/badge/Protocol-RTSP_Push_ANNOUNCE-orange.svg?style=flat-square" alt="RTSP Push" />
 </p>
 
+<p align="center">
+  <img src="metadata/screenshot.png" width="260" alt="Frigate Stream App Screenshot" style="border-radius: 20px; box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.5);" />
+</p>
+
 ---
 
 ## 📥 Direct Download (Pre-compiled APK)
