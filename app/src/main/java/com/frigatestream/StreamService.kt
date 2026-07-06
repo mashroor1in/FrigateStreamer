@@ -10,6 +10,7 @@ import com.pedro.common.ConnectChecker
 import com.pedro.encoder.input.video.CameraHelper
 import com.pedro.library.rtsp.RtspCamera2
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
