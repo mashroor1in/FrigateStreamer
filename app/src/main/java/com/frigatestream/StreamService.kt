@@ -144,7 +144,7 @@ class StreamService : Service() {
 
                 serviceScope.launch {
                     val savedConfig = PreferencesManager(applicationContext).streamConfigFlow.first()
-                    val config = if (intent != null && intent.hasExtra(EXTRA_CONFIG_IP)) {
+                    val config = if (intent.hasExtra(EXTRA_CONFIG_IP)) {
                         extractConfig(intent)
                     } else {
                         savedConfig
